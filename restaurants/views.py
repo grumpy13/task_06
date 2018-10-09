@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Restaurant
+from .forms import RestaurantForm
 
 def welcome(request):
     return render(request, 'index.html', {'msg':'Hello World!'})
@@ -19,7 +20,14 @@ def restaurant_detail(request, restaurant_id):
 
 def restaurant_create(request):
 
-    context = {
+    form = RestaurantForm()
+    if request.method == "POST":
+        form = RestaurantForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("restaurant-list")
+
+    context = { "form": form
 
     }
     return render(request, 'create.html', context)
